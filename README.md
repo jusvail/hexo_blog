@@ -1,3 +1,3 @@
-## hexo_blog
+# hexo_blog
 
 blog site powered by hexo theme by icarus
