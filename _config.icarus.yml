@@ -100,17 +100,17 @@ widgets:
         avatar: /image/site/avatar.png
         avatar_rounded: true
         gravatar: 
-        follow_link: https://github.com/ryoukou
+        follow_link: https://jusvail.com/go/followme
         social_links:
             Github:
                 icon: fab fa-github
-                url: https://github.com/ryoukou
+                url: https://jusvail.com/go/github
             Steam:
                 icon: fab fa-steam
-                url: https://steamcommunity.com/id/hling/
+                url: https://www.jusvail.com/go/steam
             OGS:
                 icon: fas fa-chess
-                url: https://online-go.com/user/view/454981
+                url: https://www.jusvail.com/go/challenge
             RSS:
                 icon: fas fa-rss
                 url: /

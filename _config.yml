@@ -66,5 +66,5 @@ ignore: null
 theme: icarus
 deploy:
   type: git
-  repo: git@github.com:ryoukou/hexo_blog.git
+  repo: git@github.com:jusvail/hexo_blog.git
   branch: gh-pages
