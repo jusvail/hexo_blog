@@ -1,29 +1,32 @@
 ---
-title: 结束了！2018
+title: It's over! 2018
 cover: 
 comments: false
 date: 2019/1/6 20:53:25
+updated: 2019/1/6 20:53:25
 categories:
-- 日志
+- Journal
 tags:
-- usual-day
+- Journal
 
 ---
 
 </br>
 
-转眼间2019了，终于也不再是学生了。
+End of 2018!
 
-小时候疯狂希望快快长大，现在终于开始感觉到时间的流逝。
+In the blink of an eye, it's 2019, and finally, I'm no longer a student.
 
-最近正在看《苏菲的世界》，真是一本好书。
+When I was young, I eagerly wished to grow up quickly, but now I'm beginning to feel the passage of time.
 
-再想到经常会思考人死后意识是否存在？这类的哲学问题。也越来越意识到一个人的渺小，自己不过是个再普通不过的人罢了。
+Recently, I've been reading 'Sophie's World,' and it's truly a wonderful book.
 
-10年后我会变得怎么样？我也很好奇，也迫不及待地想知道。但是10年后我也老了吧。
+It makes me think about philosophical questions like whether consciousness exists after death more often. I'm increasingly aware of how insignificant one person is; I'm just an ordinary person after all.
 
-那一年后呢，我想一定会比现在的我生活的更好些。
+What will I be like in 10 years? I'm curious and eager to find out. But in 10 years, I'll be older too.
 
-生活总会慢慢变好的。
+And what about after that year? I think I'll definitely be living a better life than I am now.
 
-顺其自然
+Life always gets better slowly.
+
+Just go with the flow.
