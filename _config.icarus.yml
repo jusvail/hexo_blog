@@ -1,13 +1,14 @@
 version: 5.1.0
 variant: default
 logo: /image/site/logo.png
+language: en_US
 head:
     favicon: /image/site/favicon.ico
     manifest:
         name: 
         short_name: 
         start_url: 
-        theme_color: 
+        theme_color: "#3273dc"
         background_color: 
         display: standalone
         icons:
@@ -96,7 +97,7 @@ widgets:
         type: profile
         author: Elizabeth Hamilton
         author_title: History always repeats itself. Justice will finally prevail.
-        location: Gothenburg, Sweden
+        location: Byglandsfjord, Norway 
         avatar: /image/site/avatar.png
         avatar_rounded: true
         gravatar: 
@@ -107,10 +108,10 @@ widgets:
                 url: https://jusvail.com/go/github
             Steam:
                 icon: fab fa-steam
-                url: https://www.jusvail.com/go/steam
+                url: https://go.jusvail.com/steam
             OGS:
                 icon: fas fa-chess
-                url: https://www.jusvail.com/go/challenge
+                url: https://go.jusvail.com/challenge
             RSS:
                 icon: fas fa-rss
                 url: /

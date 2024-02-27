@@ -3,6 +3,7 @@ title: The SSH passwordless login for Linux VPS
 cover: 
 comments: true
 date: 2018/12/9 13:22:25
+updated: 2018/12/9 13:22:25
 categories:
 - Linux
 tags:
@@ -53,14 +54,13 @@ vi ~/.ssh/config
 ```
 
 Add configurations like:
-
-``` console
+{% codeblock lang:bash >unfolded %}
 Host myvps
 User username
 HostName IP_or_domain_of_vps
 Port 22 (default)
 IdentityFile ~/.ssh/id_rsa
-```
+{% endcodeblock %}
 
 After that, you might still encounter permission issues mentioned above. Similarly, change the permission to 600:
 
