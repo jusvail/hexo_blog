@@ -21,7 +21,7 @@ Carelessly hurt her so bad.
 Long she thought her heart had hardened,
 Immune to hate, to love, to feel.
 But the armor was mere illusion,
-Her tender heart beneath was real.
+Her fragile heart beneath was real.
 
 Kindness, they said, she must possess,
 Yet those who preached it turned away.
@@ -33,7 +33,7 @@ Her soul yearned for distant skies.
 To dwell in valleys, calm and serene,
 Where sorrow ends and pain subsides.
 
-Yet amidst the turmoil, she finds resilience,
+Yet amidst the turmoil, she becomes resilient,
 A quiet determination to endure.
 She knows her strength will see her through,
 For in this quest, that is the meaning of her life.
