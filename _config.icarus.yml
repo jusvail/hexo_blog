@@ -123,36 +123,36 @@ widgets:
         depth: 3
     -
         position: left
-        type: links
-        links:
-            Hexo: https://hexo.io
-            Bulma: https://bulma.io
-    -
-        position: left
         type: categories
     -
-        position: left
+        position: right
         type: recent_posts
     -
         position: left
         type: archives
     -
-        position: left
+        position: right
         type: tags
         order_by: name
         amount: 
         show_count: true
     -
         position: left
+        type: adsense
+        client_id: ca-pub-4695419220597596
+        slot_id: 1069155967
+    -
+        position: right
         type: subscribe_email
         description: 
         feedburner_id: ''
     -
-        position: left
+        position: right
         type: followit
         description: 
         action_url: ''
         verification_code: ''
+
 plugins:
     animejs: true
     back_to_top: true

@@ -7,6 +7,7 @@ language: en
 timezone: Asia/Tokyo
 url: http://hling.org/
 root: /
+
 permalink: 'blog/:title/'
 permalink_defaults: null
 pretty_urls:
