@@ -64,7 +64,7 @@ pagination_dir: page
 include: null
 exclude: null
 ignore: null
-theme: icarus
+theme: fluid
 deploy:
   type: git
   repo: git@github.com:jusvail/hexo_blog.git
