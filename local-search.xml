@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>One day she will leave and never come back</title>
+    <link href="/blog/202403/whydoyoufuckingstillnotunderstand/"/>
+    <url>/blog/202403/whydoyoufuckingstillnotunderstand/</url>
+    
+    <content type="html"><![CDATA[</br><p>It was meant to be a day of joy,<br>Yet moisture pools in her eyes.<br>The one meant to be closest,<br>Carelessly hurt her so bad.</p><p>Long she thought her heart had hardened,<br>Immune to hate, to love, to feel.<br>But the armor was mere illusion,<br>Her fragile heart beneath was real.</p><p>Kindness, they said, she must possess,<br>Yet those who preached it turned away.<br>They claimed divinity was fiction,<br>But who would mend her heart’s dismay?</p><p>No harm to others did she wish,<br>Her soul yearned for distant skies.<br>To dwell in valleys, calm and serene,<br>Where sorrow ends and pain subsides.</p><p>Yet amidst the turmoil, she becomes resilient,<br>A quiet determination to endure.<br>She knows her strength will see her through,<br>For in this quest, that is the meaning of her life.</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Journal</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Journal</tag>
+      
+      <tag>AI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>テストテスト</title>
+    <link href="/blog/older/journal.2022.8.19/"/>
+    <url>/blog/older/journal.2022.8.19/</url>
+    
+    <content type="html"><![CDATA[<h3 id="Checking-package-dependencies"><a href="#Checking-package-dependencies" class="headerlink" title="Checking package dependencies"></a>Checking package dependencies</h3><p>meow<br>TEST TEST test<br>テストテスト</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Journal</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Journal</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>It&#39;s over! 2018</title>
+    <link href="/blog/older/over_of_2018/"/>
+    <url>/blog/older/over_of_2018/</url>
+    
+    <content type="html"><![CDATA[</br><p>End of 2018!</p><p>In the blink of an eye, it’s 2019, and finally, I’m no longer a student.</p><p>When I was young, I eagerly wished to grow up quickly, but now I’m beginning to feel the passage of time.</p><p>Recently, I’ve been reading ‘Sophie’s World,’ and it’s truly a wonderful book.</p><p>It makes me think about philosophical questions like whether consciousness exists after death more often. I’m increasingly aware of how insignificant one person is; I’m just an ordinary person after all.</p><p>What will I be like in 10 years? I’m curious and eager to find out. But in 10 years, I’ll be older too.</p><p>And what about after that year? I think I’ll definitely be living a better life than I am now.</p><p>Life always gets better slowly.</p><p>Just go with the flow.</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Journal</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Journal</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>The SSH passwordless login for Linux VPS</title>
+    <link href="/blog/older/login_without-pwd/"/>
+    <url>/blog/older/login_without-pwd/</url>
+    
+    <content type="html"><![CDATA[<p>Regarding SSH login on Linux, it’s seemingly simple but I always forget which step. So, I’m writing it down now to prevent forgetting in the future.</p><span id="more"></span><h3 id="Steps"><a href="#Steps" class="headerlink" title="Steps"></a>Steps</h3><p>First, generate the public and private keys in the local terminal:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">ssh-keygen -t rsa<br></code></pre></td></tr></table></figure><p>Just press Enter all the way. Once done, transfer the local public key to the VPS:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">scp ~/.ssh/id_rsa.pub user@hostname:~/.ssh/<br></code></pre></td></tr></table></figure><p>Finally, add the transferred public key to ~&#x2F;.ssh&#x2F;authorized_keys on the VPS:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">cat ~/.ssh/id_rsa.pub &gt;~/.ssh/authorized_keys <br></code></pre></td></tr></table></figure><p>If the operation was performed as root, when SSHing, you might encounter:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">WARNING: UNPROTECTED PRIVATE KEY FILE!<br></code></pre></td></tr></table></figure><p>The error indicates that the private key is too exposed. Change the permissions to fix this:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">chmod 600 ~/.ssh/id_rsa<br></code></pre></td></tr></table></figure><p>You can also set up multiple VPS logins in ~&#x2F;.ssh&#x2F;config:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs console">vi ~/.ssh/config<br><br></code></pre></td></tr></table></figure><p>Add configurations like:</p><figure class="highlight bash"><figcaption><span>>unfolded</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">Host myvps<br>User username<br>HostName IP_or_domain_of_vps<br>Port 22 (default)<br>IdentityFile ~/.ssh/id_rsa<br></code></pre></td></tr></table></figure><p>After that, you might still encounter permission issues mentioned above. Similarly, change the permission to 600:</p><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">chmod 600 ~/.ssh/config<br></code></pre></td></tr></table></figure><p>All done!</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Linux</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>ssh</tag>
+      
+      <tag>linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
