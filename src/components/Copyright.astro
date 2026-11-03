@@ -1,0 +1,68 @@
+---
+import { formatDate } from '../lib/date';
+import type { Post } from '../lib/posts';
+import { config } from '../site.config';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { copyright } = config.post;
+const license = copyright.license.toUpperCase();
+const ccParts: Record<string, string> = {
+  BY: 'BY - Attribution',
+  SA: 'SA - Share-alike',
+  NC: 'NC - Non-commercial',
+  ND: 'ND - No derivative works',
+};
+const isCreativeCommons = ['BY', 'BY-SA', 'BY-ND', 'BY-NC', 'BY-NC-SA', 'BY-NC-ND'].includes(license);
+---
+
+<div class="license-box my-3">
+  <div class="license-title">
+    <div>{post.title}</div>
+    <div>{new URL(post.url, config.site.url).toString()}</div>
+  </div>
+  <div class="license-meta">
+    {
+      copyright.author && (
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>{config.site.author}</div>
+        </div>
+      )
+    }
+    {
+      copyright.postDate.enable && (
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>{formatDate(post.date, copyright.postDate.format)}</div>
+        </div>
+      )
+    }
+    {
+      license && (
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            {isCreativeCommons
+              ? license.split('-').map((part) => (
+                  <a
+                    class="print-no-link"
+                    target="_blank"
+                    href={`https://creativecommons.org/licenses/${license.toLowerCase()}/4.0/`}
+                  >
+                    <span class="hint--top hint--rounded" aria-label={ccParts[part]}>
+                      <i class={`iconfont icon-${part.toLowerCase()}`} />
+                    </span>
+                  </a>
+                ))
+              : license}
+          </div>
+        </div>
+      )
+    }
+  </div>
+  <div class="license-icon iconfont"></div>
+</div>

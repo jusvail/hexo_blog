@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { config } from '../site.config';
+
+const { page404 } = config;
+const redirectScript = `
+  function redirect() {
+    location.href = "/";
+  }
+  ${page404.redirectDelay ? `setTimeout(redirect, ${page404.redirectDelay})` : ''}
+`;
+---
+
+<Layout layout="404" subtitle="Page not found" banner={page404} meta={{ title: 'Page not found', type: 'website' }}>
+  <script is:inline set:html={redirectScript} />
+</Layout>

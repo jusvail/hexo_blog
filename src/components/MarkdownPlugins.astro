@@ -1,0 +1,72 @@
+---
+// Stylesheets and scripts for pages that show rendered markdown.
+import { config } from '../site.config';
+
+interface Props {
+  part: 'css' | 'scripts';
+}
+
+const { part } = Astro.props;
+const { cdn, code, features, post } = config;
+
+const anchorScript = `
+  Fluid.utils.createScript('${cdn.anchor}anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+`;
+
+const fancyboxScript = `
+  Fluid.utils.createScript('${cdn.fancybox}jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+`;
+---
+
+{
+  part === 'css' ? (
+    <>
+      <link rel="stylesheet" href={`${cdn.githubMarkdown}github-markdown.min.css`} />
+      <link rel="stylesheet" href={`${cdn.hint}hint.min.css`} />
+      {post.imageZoom.enable && <link rel="stylesheet" href={`${cdn.fancybox}jquery.fancybox.min.css`} />}
+    </>
+  ) : (
+    <>
+      {code.copyBtn && <script is:inline src={`${cdn.clipboard}clipboard.min.js`} />}
+      {(code.copyBtn || (code.language.enable && code.language.default)) && (
+        <script is:inline>Fluid.plugins.codeWidget();</script>
+      )}
+      {features.anchorjs.enable && <script is:inline set:html={anchorScript} />}
+      {post.imageZoom.enable && <script is:inline set:html={fancyboxScript} />}
+      {post.imageCaption && <script is:inline>Fluid.plugins.imageCaption();</script>}
+    </>
+  )
+}

@@ -1,0 +1,30 @@
+---
+// One tag's posts, with later pages.
+import type { GetStaticPaths } from 'astro';
+import ArchiveList from '../../components/ArchiveList.astro';
+import Layout from '../../layouts/Layout.astro';
+import { pageParam, paginate, type Pagination } from '../../lib/paginate';
+import { getTags, type Post } from '../../lib/posts';
+import { config } from '../../site.config';
+
+export const getStaticPaths = (async () =>
+  (await getTags()).flatMap((group) =>
+    paginate(group.posts, group.url).map((page) => ({
+      params: { path: [group.url.slice('/tags/'.length, -1), pageParam(page.current)].filter(Boolean).join('/') },
+      props: { page, name: group.name, postTotal: group.posts.length },
+    })),
+  )) satisfies GetStaticPaths;
+
+interface Props {
+  page: Pagination<Post>;
+  name: string;
+  postTotal: number;
+}
+
+const { page, name, postTotal } = Astro.props;
+const title = `Tags - ${name}`;
+---
+
+<Layout layout="tag" subtitle={title} banner={config.tag} meta={{ title, type: 'website' }}>
+  <ArchiveList page={page} postTotal={postTotal} />
+</Layout>

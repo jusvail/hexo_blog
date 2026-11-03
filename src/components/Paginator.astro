@@ -1,0 +1,58 @@
+---
+// Page links as Hexo's paginator helper drew them (mid size 2, end size 1).
+import { pageUrl, type Pagination } from '../lib/paginate';
+import { config } from '../site.config';
+
+interface Props {
+  page: Pagination<unknown>;
+}
+
+const { current, total, base } = Astro.props.page;
+const anchor = config.scrollDownArrow.scrollAfterTurningPage ? '#board' : '';
+const link = (n: number) => pageUrl(base, n, anchor);
+
+const leftEnd = Math.min(1, current - 1);
+const rightEnd = Math.max(total, current + 1);
+const leftMid = Math.max(leftEnd + 1, current - 2);
+const rightMid = Math.min(rightEnd - 1, current + 2);
+const range = (from: number, to: number) => Array.from({ length: Math.max(0, to - from + 1) }, (_, i) => from + i);
+
+type Item = { kind: 'page'; n: number } | { kind: 'space' };
+const items: Item[] = [
+  ...range(1, leftEnd).map((n) => ({ kind: 'page', n }) as const),
+  ...(leftMid - leftEnd > 1 ? [{ kind: 'space' } as const] : []),
+  ...range(leftMid, rightMid).map((n) => ({ kind: 'page', n }) as const),
+  ...(rightEnd - rightMid > 1 ? [{ kind: 'space' } as const] : []),
+  ...range(rightEnd, total).map((n) => ({ kind: 'page', n }) as const),
+];
+---
+
+{
+  total > 1 && (
+    <nav aria-label="navigation">
+      <span class="pagination" id="pagination">
+        {current > 1 && (
+          <a class="extend prev" rel="prev" href={link(current - 1)}>
+            <i class="iconfont icon-arrowleft" />
+          </a>
+        )}
+        {items.map((item) =>
+          item.kind === 'space' ? (
+            <span class="space">&hellip;</span>
+          ) : item.n === current ? (
+            <span class="page-number current">{item.n}</span>
+          ) : (
+            <a class="page-number" href={link(item.n)}>
+              {item.n}
+            </a>
+          ),
+        )}
+        {current < total && (
+          <a class="extend next" rel="next" href={link(current + 1)}>
+            <i class="iconfont icon-arrowright" />
+          </a>
+        )}
+      </span>
+    </nav>
+  )
+}

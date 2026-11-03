@@ -1,0 +1,8 @@
+theme-config(config, predef)
+  unquote(site-config(config) ? site-config(config):predef)
+
+theme-config-unit(config, predef, unit)
+  unit(site-config(config) ? site-config(config):predef, unit)
+
+theme-config-origin(config, predef)
+  (site-config(config) ? site-config(config):predef)

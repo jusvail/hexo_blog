@@ -1,0 +1,67 @@
+---
+import { config } from '../site.config';
+
+const { navbar, search, darkMode } = config;
+---
+
+<nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>{navbar.blogTitle}</strong>
+    </a>
+
+    <button
+      id="navbar-toggler-btn"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        {
+          navbar.menu.map((item) => (
+            <li class="nav-item">
+              <a class="nav-link" href={item.link} target="_self">
+                <i class={item.icon} />
+                <span>{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+        {
+          search.enable && (
+            <li class="nav-item" id="search-btn">
+              <a
+                class="nav-link"
+                target="_self"
+                href="javascript:;"
+                data-toggle="modal"
+                data-target="#modalSearch"
+                aria-label="Search"
+              >
+                <i class="iconfont icon-search" />
+              </a>
+            </li>
+          )
+        }
+        {
+          darkMode.enable && (
+            <li class="nav-item" id="color-toggle-btn">
+              <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+                <i class="iconfont icon-dark" id="color-toggle-icon" />
+              </a>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,22 @@
+---
+import type { Term } from '../lib/posts';
+
+interface Props {
+  categories: Term[];
+  limit?: number;
+}
+
+const { categories, limit = Infinity } = Astro.props;
+---
+
+<span class="category-chains">
+  {
+    categories.slice(0, limit).map((category) => (
+      <span class="category-chain">
+        <a href={category.url} class="category-chain-item">
+          {category.name.trim()}
+        </a>
+      </span>
+    ))
+  }
+</span>

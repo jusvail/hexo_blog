@@ -1,0 +1,249 @@
+---
+// Fluid's page shell: head, navbar and banner, the page body, search, footer and scripts.
+import Banner from '../components/Banner.astro';
+import Footer from '../components/Footer.astro';
+import Navigation from '../components/Navigation.astro';
+import Search from '../components/Search.astro';
+import { clientConfig, openGraph, type PageMeta } from '../lib/head';
+import { config } from '../site.config';
+
+export type PageLayout =
+  | 'index'
+  | 'post'
+  | 'page'
+  | 'about'
+  | 'archive'
+  | 'categories'
+  | 'category'
+  | 'tags'
+  | 'tag'
+  | 'links'
+  | '404';
+
+interface Props {
+  layout: PageLayout;
+  meta: PageMeta;
+  /** Banner text. */
+  subtitle: string;
+  banner: { bannerImg: string; bannerHeight: number; bannerMaskAlpha: number };
+}
+
+const { layout, meta, subtitle, banner } = Astro.props;
+const { site, cdn, features, analytics, lazyload, search, darkMode, code } = config;
+
+const isPost = layout === 'post';
+// 404.astro is served as /404.html.
+const path = layout === '404' ? '/404.html' : Astro.url.pathname;
+const title = meta.title ? [meta.title, site.title].join(site.tabTitleSeparator) : site.title;
+const sloganApi = layout === 'index' && config.index.slogan.api.enable ? config.index.slogan.api : undefined;
+
+const configScript = `
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = ${JSON.stringify(clientConfig())};
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+`;
+
+const analyticsScript = `
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=${analytics.googleMeasurementId}", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '${analytics.googleMeasurementId}');
+        });
+      }
+`;
+
+const progressScript = `
+    NProgress.configure(${JSON.stringify(features.progressbar.options)})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+`;
+
+const typingCall = sloganApi
+  ? `jQuery.ajax({
+          type: '${sloganApi.method}',
+          url: '${sloganApi.url}',
+          headers: ${JSON.stringify(sloganApi.headers)},
+          dataType: 'json',
+          success: function(result) {
+            var apiText;
+            if (result) {
+              var keys = '${sloganApi.keys.join(',')}'.split(',');
+              if (result instanceof Array) {
+                result = result[0];
+              }
+              for (const k of keys) {
+                var value = result[k];
+                if (typeof value === 'string') {
+                  apiText = value;
+                  break;
+                } else if (value instanceof Object) {
+                  result = value;
+                }
+              }
+            }
+            apiText ? typing(apiText) : typing(text);
+          },
+          error: function(xhr, status, error) {
+            if (error) {
+              console.error('Failed to request ${sloganApi.url}:', error);
+            }
+            typing(text);
+          }
+        })`
+  : 'typing(text);';
+
+const typingScript = `
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+        ${typingCall}
+    })(window, document);
+`;
+---
+
+<!doctype html>
+<html lang={site.language} data-default-color-scheme={darkMode.enable ? darkMode.default : undefined}>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href={site.appleTouchIcon} />
+    <link rel="icon" href={site.favicon} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    {site.forceHttps && <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />}
+    <meta name="theme-color" content={config.color.navbarBg} />
+    <meta name="author" content={site.author} />
+    <meta name="keywords" content={site.keywords} />
+    {config.openGraph.enable ? <Fragment set:html={openGraph(meta, path)} /> : null}
+    {
+      (config.post.meta.views.enable || config.footer.statistics.enable) && (
+        <meta name="referrer" content="no-referrer-when-downgrade" />
+      )
+    }
+    <title>{title}</title>
+    <link rel="stylesheet" href={`${cdn.bootstrap}css/bootstrap.min.css`} />
+    <slot name="head-css" />
+    {config.iconfonts.map((href) => <link rel="stylesheet" href={href} />)}
+    <link rel="stylesheet" href="/css/main.css" />
+    {code.highlight.enable && <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />}
+    {
+      code.highlight.enable && darkMode.enable && (
+        <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+      )
+    }
+    {config.customCss.map((href) => <link rel="stylesheet" href={href} />)}
+    <script is:inline id="fluid-configs" set:html={configScript} />
+    <script is:inline src="/js/utils.js"></script>
+    <script is:inline src="/js/color-schema.js"></script>
+    {analytics.enable && <script is:inline async set:html={analyticsScript} />}
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <header>
+      <div class="header-inner" style={`height: ${banner.bannerHeight}vh;`}>
+        <Navigation />
+        <Banner layout={layout} subtitle={subtitle} banner={banner}>
+          <slot name="banner-meta" />
+        </Banner>
+      </div>
+    </header>
+
+    <main>
+      {
+        isPost || layout === '404' ? (
+          <slot />
+        ) : (
+          <div class="container nopadding-x-md">
+            <div
+              id="board"
+              style={banner.bannerHeight >= 100 && config.banner.parallax ? 'margin-top: 0' : undefined}
+            >
+              {layout === 'about' && (
+                <div class="about-avatar">
+                  <img
+                    src={config.about.avatar}
+                    srcset={lazyload.enable ? lazyload.loadingImg : undefined}
+                    lazyload={lazyload.enable ? '' : undefined}
+                    class="img-fluid"
+                    alt="avatar"
+                  />
+                </div>
+              )}
+              <div class="container">
+                <div class="row">
+                  <div class="col-12 col-md-10 m-auto">
+                    <slot />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        config.scrollTopArrow.enable && (
+          <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+            <i class="iconfont icon-arrowup" aria-hidden="true" />
+          </a>
+        )
+      }
+
+      {search.enable && <Search />}
+    </main>
+
+    <footer>
+      <Footer />
+    </footer>
+
+    <!-- Scripts -->
+    {
+      features.progressbar.enable && (
+        <>
+          <script is:inline src={`${cdn.nprogress}nprogress.min.js`} />
+          <link rel="stylesheet" href={`${cdn.nprogress}nprogress.min.css`} />
+          <script is:inline set:html={progressScript} />
+        </>
+      )
+    }
+    <script is:inline src={`${cdn.jquery}jquery.min.js`}></script>
+    <script is:inline src={`${cdn.bootstrap}js/bootstrap.min.js`}></script>
+    <script is:inline src="/js/events.js"></script>
+    <script is:inline src="/js/plugins.js"></script>
+    {
+      features.typing.enable && (
+        <>
+          <script is:inline src={`${cdn.typed}typed.min.js`} />
+          <script is:inline set:html={typingScript} />
+        </>
+      )
+    }
+    {lazyload.enable && <script is:inline src="/js/img-lazyload.js" />}
+    <slot name="scripts" />
+    {search.enable && <script is:inline src="/js/local-search.js" />}
+    {
+      (config.footer.statistics.enable || (isPost && config.post.meta.views.enable)) && (
+        <script is:inline defer src={`${cdn.busuanzi}busuanzi.pure.mini.js`} />
+      )
+    }
+    <!-- the boot of the theme, keep it at the bottom -->
+    <script is:inline src="/js/boot.js"></script>
+
+    <noscript>
+      <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+    </noscript>
+  </body>
+</html>

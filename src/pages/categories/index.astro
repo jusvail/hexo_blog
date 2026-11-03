@@ -1,0 +1,61 @@
+---
+import { createHash } from 'node:crypto';
+import Layout from '../../layouts/Layout.astro';
+import { getCategories } from '../../lib/posts';
+import { config } from '../../site.config';
+
+// Most posts first; each category lists its newest posts, then a "More..." link.
+const categories = (await getCategories()).sort((a, b) => b.posts.length - a.posts.length);
+const { postLimit } = config.category;
+const md5 = (text: string) => createHash('md5').update(text).digest('hex');
+---
+
+<Layout layout="categories" subtitle="Categories" banner={config.category} meta={{ title: 'Categories', type: 'website' }}>
+  <div class="category-list">
+    {
+      categories.map((category) => {
+        const id = md5(category.name);
+        return (
+          <div class="category row nomargin-x">
+            <a
+              class="category-item collapsed list-group-item category-item-action col-10 col-md-11 col-xm-11"
+              title={category.name.trim()}
+              id={`heading-${id}`}
+              role="tab"
+              data-toggle="collapse"
+              href={`#collapse-${id}`}
+              aria-expanded="false"
+            >
+              {category.name.trim()}
+              <span class="list-group-count" />
+              <i class="iconfont icon-arrowright" />
+            </a>
+            <a href={category.url} class="category-count col-2 col-md-1 col-xm-1">
+              <i class="iconfont icon-articles" />
+              <span>{category.posts.length}</span>
+            </a>
+            <div
+              class="category-collapse collapse"
+              id={`collapse-${id}`}
+              role="tabpanel"
+              aria-labelledby={`heading-${id}`}
+            >
+              <div class="category-post-list">
+                {category.posts.slice(0, postLimit).map((post) => (
+                  <a href={post.url} title={post.title} class="list-group-item list-group-item-action">
+                    <span class="category-post">{post.title}</span>
+                  </a>
+                ))}
+                {category.posts.length > postLimit && (
+                  <a href={category.url} class="list-group-item list-group-item-action">
+                    <span class="category-post">More...</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</Layout>

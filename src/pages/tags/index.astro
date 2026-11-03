@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getTags } from '../../lib/posts';
+import { config } from '../../site.config';
+
+// Tag cloud: font size and color scale with how many distinct post counts rank below a tag.
+const { minFont, maxFont, unit, startColor, endColor } = config.tag.tagcloud;
+const tags = (await getTags()).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+const sizes = [...new Set(tags.map((tag) => tag.posts.length))].sort((a, b) => a - b);
+
+const rgb = (hex: string) => {
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
+};
+const toHex = (channels: number[]) => {
+  const hex = channels.map((c) => c.toString(16).padStart(2, '0'));
+  return channels.every((c) => c % 17 === 0) ? `#${hex.map((h) => h[0]).join('')}` : `#${hex.join('')}`;
+};
+const [from, to] = [rgb(startColor), rgb(endColor)];
+
+const style = (count: number) => {
+  const ratio = sizes.length > 1 ? sizes.indexOf(count) / (sizes.length - 1) : 0;
+  const size = parseFloat((minFont + (maxFont - minFont) * ratio).toFixed(2));
+  const color = toHex(from.map((c, i) => Math.round(c + (to[i] - c) * ratio)));
+  return `font-size: ${size}${unit}; color: ${color}`;
+};
+---
+
+<Layout layout="tags" subtitle="Tags" banner={config.tag} meta={{ title: 'Tags', type: 'website' }}>
+  <div class="text-center tagcloud">
+    {
+      tags.map((tag) => (
+        <a href={tag.url} style={style(tag.posts.length)}>
+          {tag.name}
+        </a>
+      ))
+    }
+  </div>
+</Layout>

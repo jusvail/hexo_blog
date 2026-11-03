@@ -1,0 +1,46 @@
+---
+import { config } from '../site.config';
+import type { PageLayout } from '../layouts/Layout.astro';
+
+interface Props {
+  layout: PageLayout;
+  subtitle: string;
+  banner: { bannerImg: string; bannerHeight: number; bannerMaskAlpha: number };
+}
+
+const { layout, subtitle, banner } = Astro.props;
+const { scrollDownArrow } = config;
+const showArrow = scrollDownArrow.enable && scrollDownArrow.bannerHeightLimit <= banner.bannerHeight && layout !== '404';
+---
+
+<div
+  id="banner"
+  class="banner"
+  parallax={config.banner.parallax ? 'true' : undefined}
+  style={`background: url('${banner.bannerImg}') no-repeat center center; background-size: cover;`}
+>
+  <div class="full-bg-img">
+    <div class="mask flex-center" style={`background-color: rgba(0, 0, 0, ${banner.bannerMaskAlpha})`}>
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          {
+            config.features.typing.enable ? (
+              <span id="subtitle" data-typed-text={subtitle} />
+            ) : (
+              <span id="subtitle" set:html={subtitle} />
+            )
+          }
+        </div>
+        <slot />
+      </div>
+
+      {
+        showArrow && (
+          <div class="scroll-down-bar">
+            <i class="iconfont icon-arrowdown" />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>

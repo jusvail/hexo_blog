@@ -1,0 +1,37 @@
+---
+// /archives/, /archives/YYYY/ and /archives/YYYY/MM/, each with later pages.
+import type { GetStaticPaths } from 'astro';
+import ArchiveList from '../../components/ArchiveList.astro';
+import Layout from '../../layouts/Layout.astro';
+import { formatDate } from '../../lib/date';
+import { pageParam, paginate, type Pagination } from '../../lib/paginate';
+import { getPosts, type Post } from '../../lib/posts';
+import { config } from '../../site.config';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  const groups = new Map<string, Post[]>([['', posts]]);
+  for (const post of posts) {
+    for (const key of [formatDate(post.date, 'YYYY'), formatDate(post.date, 'YYYY/MM')]) {
+      groups.set(key, [...(groups.get(key) ?? []), post]);
+    }
+  }
+  return [...groups].flatMap(([key, items]) =>
+    paginate(items, `/archives/${key ? `${key}/` : ''}`).map((page) => ({
+      params: { path: [key, pageParam(page.current)].filter(Boolean).join('/') || undefined },
+      props: { page, postTotal: posts.length },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Pagination<Post>;
+  postTotal: number;
+}
+
+const { page, postTotal } = Astro.props;
+---
+
+<Layout layout="archive" subtitle="Archives" banner={config.archive} meta={{ title: 'Archives', type: 'website' }}>
+  <ArchiveList page={page} postTotal={postTotal} />
+</Layout>

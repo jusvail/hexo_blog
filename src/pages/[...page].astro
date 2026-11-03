@@ -1,0 +1,77 @@
+---
+// Home page and its later pages (/page/2/ …).
+import type { GetStaticPaths } from 'astro';
+import CategoryChains from '../components/CategoryChains.astro';
+import Paginator from '../components/Paginator.astro';
+import Layout from '../layouts/Layout.astro';
+import { formatDate } from '../lib/date';
+import { pageParam, paginate, type Pagination } from '../lib/paginate';
+import { getPosts, summary, type Post } from '../lib/posts';
+import { config } from '../site.config';
+
+export const getStaticPaths = (async () =>
+  paginate(await getPosts(), '/').map((page) => ({
+    params: { page: pageParam(page.current) },
+    props: { page },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  page: Pagination<Post>;
+}
+
+const { page } = Astro.props;
+const { index, site } = config;
+const target = index.postUrlTarget;
+---
+
+<Layout
+  layout="index"
+  subtitle={index.slogan.enable ? index.slogan.text : ''}
+  banner={index}
+  meta={{ type: 'website' }}
+>
+  {
+    page.items.map((post) => (
+      <div class="row mx-auto index-card">
+        <article class="col-12 col-md-12 mx-auto index-info">
+          <h2 class="index-header">
+            <a href={post.url} target={target}>
+              {post.title}
+            </a>
+          </h2>
+
+          <a class="index-excerpt index-excerpt__noimg" href={post.url} target={target}>
+            <div>{summary(post.excerpt || (index.autoExcerpt ? post.html : ''))}</div>
+          </a>
+
+          <div class="index-btm post-metas">
+            {index.postMeta.date && (
+              <div class="post-meta mr-3">
+                <i class="iconfont icon-date" />
+                <time datetime={formatDate(post.date, 'YYYY-MM-DD HH:mm')} pubdate>
+                  {formatDate(post.date, site.dateFormat)}
+                </time>
+              </div>
+            )}
+            {index.postMeta.category && post.categories.length > 0 && (
+              <div class="post-meta mr-3 d-flex align-items-center">
+                <i class="iconfont icon-category" />
+                <CategoryChains categories={post.categories} limit={1} />
+              </div>
+            )}
+            {index.postMeta.tag && post.tags.length > 0 && (
+              <div class="post-meta">
+                <i class="iconfont icon-tags" />
+                {post.tags.map((tag) => (
+                  <a href={tag.url}>#{tag.name}</a>
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      </div>
+    ))
+  }
+
+  <Paginator page={page} />
+</Layout>

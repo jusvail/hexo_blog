@@ -1,0 +1,27 @@
+---
+import { config } from '../site.config';
+
+const { content, statistics } = config.footer;
+const [pvBefore, pvAfter] = statistics.pvFormat.split('{}');
+const [uvBefore, uvAfter] = statistics.uvFormat.split('{}');
+---
+
+<div class="footer-inner">
+  {content && <div class="footer-content" set:html={content} />}
+  {
+    statistics.enable && (
+      <div class="statistics">
+        <span id="busuanzi_container_site_pv" style="display: none">
+          <Fragment set:html={pvBefore} />
+          <span id="busuanzi_value_site_pv" />
+          <Fragment set:html={pvAfter} />
+        </span>
+        <span id="busuanzi_container_site_uv" style="display: none">
+          <Fragment set:html={uvBefore} />
+          <span id="busuanzi_value_site_uv" />
+          <Fragment set:html={uvAfter} />
+        </span>
+      </div>
+    )
+  }
+</div>

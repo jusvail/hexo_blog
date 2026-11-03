@@ -1,0 +1,58 @@
+---
+// The table of contents, or with `part="script"` the tocbot setup that fills it.
+import { config } from '../site.config';
+
+interface Props {
+  part?: 'script';
+}
+
+const tocScript = `
+  Fluid.utils.createScript('${config.cdn.tocbot}tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+`;
+---
+
+{
+  Astro.props.part === 'script' ? (
+    <script is:inline set:html={tocScript} />
+  ) : (
+    <div id="toc">
+      <p class="toc-header">
+        <i class="iconfont icon-list" />
+        <span>Table of Contents</span>
+      </p>
+      <div class="toc-body" id="toc-body" />
+    </div>
+  )
+}

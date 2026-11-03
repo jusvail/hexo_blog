@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { config } from '../site.config';
+
+const { links, lazyload } = config;
+const onerror = `this.onerror=null; this.src=this.srcset='${links.onerrorAvatar}'`;
+---
+
+<Layout layout="links" subtitle="Links" banner={links} meta={{ title: 'Links', type: 'website' }}>
+  <div class="row links">
+    {
+      links.items.map((item) => (
+        <div class="card col-lg-4 col-md-6 col-sm-12">
+          <a href={item.link} class="card-body hover-with-bg" target="_blank" rel="noopener">
+            <div class="card-content">
+              <div class="link-avatar my-auto">
+                <img
+                  src={item.avatar}
+                  srcset={lazyload.enable ? lazyload.loadingImg : undefined}
+                  lazyload={lazyload.enable ? '' : undefined}
+                  alt={item.title}
+                  onerror={onerror}
+                />
+              </div>
+              <div class="link-text">
+                <div class="link-title" set:html={item.title} />
+                <div class="link-intro" set:html={item.intro} />
+              </div>
+            </div>
+          </a>
+        </div>
+      ))
+    }
+  </div>
+</Layout>

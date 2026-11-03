@@ -1,0 +1,31 @@
+---
+// Standalone markdown pages such as /resume/ and /privacy/.
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { getPage } from '../lib/posts';
+import { config } from '../site.config';
+
+export const getStaticPaths = (async () =>
+  (await getCollection('pages'))
+    .filter((entry) => entry.id !== 'about')
+    .map((entry) => ({ params: { page: entry.id } }))) satisfies GetStaticPaths;
+
+const page = await getPage(Astro.params.page);
+---
+
+<Layout
+  layout="page"
+  subtitle={page.title}
+  banner={config.page}
+  meta={{
+    title: page.title,
+    description: page.html,
+    content: page.html,
+    type: 'website',
+    published: page.date,
+    modified: page.updated ?? page.date,
+  }}
+>
+  <article class="page-content" set:html={page.html} />
+</Layout>

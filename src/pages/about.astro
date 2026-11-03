@@ -1,0 +1,47 @@
+---
+import MarkdownPlugins from '../components/MarkdownPlugins.astro';
+import Layout from '../layouts/Layout.astro';
+import { getPage } from '../lib/posts';
+import { config } from '../site.config';
+
+const page = await getPage('about');
+const { about } = config;
+---
+
+<Layout
+  layout="about"
+  subtitle="About"
+  banner={about}
+  meta={{
+    title: 'About',
+    description: page.html,
+    content: page.html,
+    type: 'website',
+    published: page.date,
+    modified: page.updated ?? page.date,
+  }}
+>
+  <MarkdownPlugins slot="head-css" part="css" />
+
+  <div class="text-center">
+    <div class="about-info">
+      <div class="about-name" set:html={about.name} />
+      <div class="about-intro" set:html={about.intro} />
+      <div class="about-icons">
+        {
+          about.icons.map((icon) => (
+            <a href={icon.link} class="hint--bottom hint--rounded" aria-label={icon.tip} target="_blank">
+              <i class={icon.class} aria-hidden="true" />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <article class="about-content page-content mt-5">
+    <div class="markdown-body" set:html={page.html} />
+  </article>
+
+  <MarkdownPlugins slot="scripts" part="scripts" />
+</Layout>

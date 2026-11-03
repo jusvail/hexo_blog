@@ -1,0 +1,32 @@
+---
+import { formatDate } from '../lib/date';
+import type { Pagination } from '../lib/paginate';
+import type { Post } from '../lib/posts';
+import Paginator from './Paginator.astro';
+
+interface Props {
+  page: Pagination<Post>;
+  postTotal: number;
+}
+
+const { page, postTotal } = Astro.props;
+const year = (post: Post) => formatDate(post.date, 'YYYY');
+---
+
+<div class="list-group">
+  <p class="h4">{postTotal} posts in total</p>
+  <hr />
+  {
+    page.items.map((post, i) => (
+      <>
+        {(i === 0 || year(post) !== year(page.items[i - 1])) && <p class="h5">{year(post)}</p>}
+        <a href={post.url} class="list-group-item list-group-item-action">
+          <time>{formatDate(post.date, 'MM-DD')}</time>
+          <div class="list-group-item-title">{post.title}</div>
+        </a>
+      </>
+    ))
+  }
+</div>
+
+<Paginator page={page} />

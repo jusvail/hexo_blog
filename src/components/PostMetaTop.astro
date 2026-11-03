@@ -1,0 +1,64 @@
+---
+import { formatDate } from '../lib/date';
+import { minutesToRead, shortCount, type Post } from '../lib/posts';
+import { fill } from '../lib/text';
+import { config } from '../site.config';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { meta } = config.post;
+const [viewsBefore, viewsAfter] = meta.views.format.split('{}');
+---
+
+<div class="mt-3">
+  {
+    meta.author && (
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true" />
+        {config.site.author}
+      </span>
+    )
+  }
+  {
+    meta.date.enable && (
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true" />
+        <time datetime={formatDate(post.date, 'YYYY-MM-DD HH:mm')} pubdate>
+          {formatDate(post.date, meta.date.format)}
+        </time>
+      </span>
+    )
+  }
+</div>
+
+<div class="mt-1">
+  {
+    meta.wordcount.enable && (
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart" />
+        {fill(meta.wordcount.format, shortCount(post.words))}
+      </span>
+    )
+  }
+  {
+    meta.min2read.enable && (
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill" />
+        {fill(meta.min2read.format, minutesToRead(post.words))}
+      </span>
+    )
+  }
+  {
+    meta.views.enable && (
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true" />
+        <Fragment set:html={viewsBefore} />
+        <span id="busuanzi_value_page_pv" />
+        <Fragment set:html={viewsAfter} />
+      </span>
+    )
+  }
+</div>

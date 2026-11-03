@@ -1,0 +1,140 @@
+---
+import type { GetStaticPaths } from 'astro';
+import CategoryChains from '../../components/CategoryChains.astro';
+import Copyright from '../../components/Copyright.astro';
+import MarkdownPlugins from '../../components/MarkdownPlugins.astro';
+import PostMetaTop from '../../components/PostMetaTop.astro';
+import Toc from '../../components/Toc.astro';
+import Layout from '../../layouts/Layout.astro';
+import { getPosts, type Post } from '../../lib/posts';
+import { config } from '../../site.config';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  // Newest first: "previous" is the newer post, "next" the older one.
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, prev: posts[i - 1], next: posts[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: Post;
+  prev?: Post;
+  next?: Post;
+}
+
+const { post, prev, next } = Astro.props;
+const { toc, copyright, prevNext } = config.post;
+const tocSide = toc.enable ? toc.placement : undefined;
+---
+
+<Layout
+  layout="post"
+  subtitle={post.title}
+  banner={config.post}
+  meta={{
+    title: post.title,
+    description: post.excerpt || post.html,
+    content: post.html,
+    type: 'article',
+    published: post.date,
+    modified: post.updated,
+    tags: post.tags.map((tag) => tag.name),
+  }}
+>
+  <MarkdownPlugins slot="head-css" part="css" />
+  <PostMetaTop slot="banner-meta" post={post} />
+
+  <div class="container-fluid nopadding-x">
+    <div class="row nomargin-x">
+      <div class="side-col d-none d-lg-block col-lg-2">
+        {
+          tocSide === 'left' && (
+            <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+              <Toc />
+            </aside>
+          )
+        }
+      </div>
+
+      <div class="col-lg-8 nopadding-x-md">
+        <div class="container nopadding-x-md" id="board-ctn">
+          <div id="board">
+            <article class="post-content mx-auto">
+              <h1 id="seo-header">{post.title}</h1>
+              <div class="markdown-body" set:html={post.html} />
+              <hr />
+              <div>
+                <div class="post-metas my-3">
+                  {
+                    post.categories.length > 0 && (
+                      <div class="post-meta mr-3 d-flex align-items-center">
+                        <i class="iconfont icon-category" />
+                        <CategoryChains categories={post.categories} />
+                      </div>
+                    )
+                  }
+                  {
+                    post.tags.length > 0 && (
+                      <div class="post-meta">
+                        <i class="iconfont icon-tags" />
+                        {post.tags.map((tag) => (
+                          <a href={tag.url} class="print-no-link">
+                            #{tag.name}
+                          </a>
+                        ))}
+                      </div>
+                    )
+                  }
+                </div>
+
+                {copyright.enable && <Copyright post={post} />}
+
+                {
+                  prevNext && (
+                    <div class="post-prevnext my-3">
+                      <article class="post-prev col-6">
+                        {prev && (
+                          <a href={prev.url} title={prev.title}>
+                            <i class="iconfont icon-arrowleft" />
+                            <span class="hidden-mobile">{prev.title}</span>
+                            <span class="visible-mobile">Previous</span>
+                          </a>
+                        )}
+                      </article>
+                      <article class="post-next col-6">
+                        {next && (
+                          <a href={next.url} title={next.title}>
+                            <span class="hidden-mobile">{next.title}</span>
+                            <span class="visible-mobile">Next</span>
+                            <i class="iconfont icon-arrowright" />
+                          </a>
+                        )}
+                      </article>
+                    </div>
+                  )
+                }
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-col d-none d-lg-block col-lg-2">
+        {
+          tocSide === 'right' && (
+            <aside class="sidebar" style="margin-left: -1rem">
+              <Toc />
+            </aside>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  <Fragment slot="scripts">
+    {tocSide && <Toc part="script" />}
+    <MarkdownPlugins part="scripts" />
+  </Fragment>
+</Layout>
