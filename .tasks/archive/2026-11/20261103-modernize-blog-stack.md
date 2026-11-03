@@ -1,6 +1,6 @@
 ---
 id: 20261103-modernize-blog-stack
-status: active
+status: completed
 queue: current
 depends_on: []
 created: 2026-11-03
@@ -136,7 +136,9 @@ Accepted differences against `gh-pages` (mechanical, from the executor's side of
   which are not published.
 
 Dependency note: `stylus@0.64` (the latest) asks for `glob@^10`, which npm reports as deprecated on install.
-`package.json` overrides it to `glob@^13`; the compiled CSS stays byte-identical.
+`package.json` overrides it to `glob@^14.0.3`. That version is not deprecated and is patched for GHSA-3g3m-2fjr-6pw4,
+and it brings `minimatch@11` (patched for GHSA-g3hv-75wg-m249). Both advisories were opened by Dependabot on the first
+push, which used `glob@13`. The compiled CSS stays byte-identical.
 
 Content syntax: the post that used Hexo's `{% codeblock lang:bash >unfolded %}` tag now uses the equivalent fence
 `` ``` bash >unfolded ``, which renders the same markup. Hexo/Fluid tag plugins and Fluid's footnote syntax are not
@@ -162,16 +164,15 @@ Any other hunk is a fidelity bug to fix, or a user-owned question if fixing it w
 - [x] 2. Listing pages: index with pagination, archives (+year/month), categories (+each), tags (+each).
 - [x] 3. Standalone pages and search: about, links, privacy, resume, 404 with its 5 s redirect, `local-search.xml`.
 - [x] 4. Head and analytics: GA through config and busuanzi, with no GTM/AdSense. Remove the Hexo files. README.
-- [ ] 5. Publish: add the workflow (done: `.github/workflows/pages.yml`). The Pages source switch is a repo-settings change: the user does it in Settings →
+- [x] 5. Publish: add the workflow (done: `.github/workflows/pages.yml`). The Pages source switch is a repo-settings change: the user does it in Settings →
       Pages → Source, or approves `gh api -X PUT repos/jusvail/hexo_blog/pages -f build_type=workflow` at that step.
       The push needs the user's go-ahead. Then confirm the live site.
 
 ## Current state
 
-Active. Slices 1–4 are done and validated locally, and the slice 5 workflow file is written. Nothing is committed or
-pushed. What remains needs the user: commit and push to `master`, and switch Settings → Pages → Source to
-"GitHub Actions" (custom domain hling.org). After that, the Publish check in Validation runs and the task can be
-archived. Until the switch, the next push publishes nothing, and `gh-pages` keeps serving the old site.
+Completed 2026-11-03. The migration is commit 067b57b on `master`, published by the Publish workflow (run
+41592021092). Afterwards, the `glob@^14.0.3` pin was changed to clear Dependabot alerts #5 and #6; it is verified
+locally and needs its own commit and push. `gh-pages` is still there as a rollback.
 
 ## Validation
 
@@ -207,7 +208,12 @@ archived. Until the switch, the next push publishes nothing, and `gh-pages` keep
   `bodyBg: 42` fails `npm run build` with TS2322.
 - Cleanup: the remaining "hexo" mentions are the footer credit and links-page items kept from the config, Fluid
   credits in vendored files, and comments that cite the Hexo behavior being reproduced.
-- Not yet run: Publish (needs the push and the Pages source switch).
+- Publish: the user switched Pages to `build_type: workflow` and pushed 067b57b. Run 41592021092 passed build and
+  deploy. https://hling.org/ shows `generator` "Astro v7.4.5" and no GTM/AdSense. Over HTTPS the post, the dotted post
+  id, a month archive, a tag, `local-search.xml`, `css/main.css` and `404.html` return 200, and an unknown path returns
+  404. The live `main.css` md5 equals `dist/css/main.css`. Plain `http://` gets a Cloudflare 301 to `https://`.
+- After the `glob@^14.0.3` pin: `npm run build` reports 0 errors / 0 warnings / 0 hints and builds 27 pages; the three
+  stylesheets are still byte-identical to `gh-pages`.
 
 ## Decisions
 
