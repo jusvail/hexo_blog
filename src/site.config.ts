@@ -20,13 +20,6 @@ interface AboutIcon {
   tip: string;
 }
 
-interface LinkItem {
-  title: string;
-  intro: string;
-  link: string;
-  avatar: string;
-}
-
 export interface SiteConfig {
   site: {
     title: string;
@@ -169,7 +162,6 @@ export interface SiteConfig {
     tagcloud: { minFont: number; maxFont: number; unit: string; startColor: string; endColor: string };
   };
   about: Banner & { avatar: string; name: string; intro: string; icons: AboutIcon[] };
-  links: Banner & { items: LinkItem[]; onerrorAvatar: string };
   page: Banner;
   page404: Banner & { redirectDelay: number };
 }
@@ -273,8 +265,7 @@ export const config: SiteConfig = {
   scrollTopArrow: { enable: true },
   openGraph: { enable: true, twitterCard: 'summary_large_image' },
   footer: {
-    content:
-      '<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>',
+    content: '',
     statistics: { enable: true, pvFormat: 'Views: {}', uvFormat: 'Visitors: {}' },
   },
   index: {
@@ -327,22 +318,6 @@ export const config: SiteConfig = {
       { class: 'iconfont icon-steam', link: 'https://go.jusvail.com/steam', tip: 'Steam' },
       { class: 'iconfont icon-chess', link: 'https://go.jusvail.com/challenge', tip: 'OGS' },
     ],
-  },
-  links: {
-    bannerImg: '/image/site/default.png',
-    bannerHeight: 60,
-    bannerMaskAlpha: 0.3,
-    items: [
-      { title: 'Fluid Blog', intro: '主题博客', link: 'https://hexo.fluid-dev.com/', avatar: '/img/favicon.png' },
-      { title: 'Fluid Docs', intro: '主题使用指南', link: 'https://hexo.fluid-dev.com/docs/', avatar: '/img/favicon.png' },
-      {
-        title: 'Fluid Repo',
-        intro: '主题 GitHub 仓库',
-        link: 'https://github.com/fluid-dev/hexo-theme-fluid',
-        avatar: '/img/favicon.png',
-      },
-    ],
-    onerrorAvatar: '/image/site/avatar.png',
   },
   page: { bannerImg: '/image/site/default.png', bannerHeight: 60, bannerMaskAlpha: 0.3 },
   page404: { bannerImg: '/image/site/default.png', bannerHeight: 85, bannerMaskAlpha: 0.3, redirectDelay: 5000 },
